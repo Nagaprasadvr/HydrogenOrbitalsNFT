@@ -5,6 +5,7 @@ import Home from "./Home";
 import { DEFAULT_TIMEOUT } from "./connection";
 import { clusterApiUrl } from "@solana/web3.js";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import hyd from './back.png'
 import {
   getPhantomWallet,
   getSlopeWallet,
@@ -19,13 +20,13 @@ import {
 } from "@solana/wallet-adapter-react";
 import { WalletDialogProvider } from "@solana/wallet-adapter-material-ui";
 
-import { createTheme, ThemeProvider } from "@material-ui/core";
+// import { createTheme } from "@material-ui/core";
 
-const theme = createTheme({
-  palette: {
-    type: "dark",
-  },
-});
+// const theme = createTheme({
+//   palette: {
+//     type: "light",
+//   },
+// });
 
 const getCandyMachineId = (): anchor.web3.PublicKey | undefined => {
   try {
@@ -68,7 +69,7 @@ const App = () => {
   );
 
   return (
-    <ThemeProvider theme={theme}>
+    <div>
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletDialogProvider>
@@ -83,7 +84,13 @@ const App = () => {
           </WalletDialogProvider>
         </WalletProvider>
       </ConnectionProvider>
-    </ThemeProvider>
+      <br>
+      </br>
+      <br></br>
+      
+      <img  style={{display:"flex",height:"100vh",width:"100vw",alignItems:"center",justifyContent:"center",alignContent:"center"}} src={hyd} alt="Hydrogen orbital"/>
+      </div>
+    
   );
 };
 

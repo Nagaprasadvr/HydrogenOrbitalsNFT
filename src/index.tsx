@@ -5,8 +5,10 @@ import reportWebVitals from "./reportWebVitals";
 
 import "./index.css";
 
+
 ReactDOM.render(
   <React.StrictMode>
+    <div><h1 style={{color:"teal"}} className="App body code">Hydrogen Orbitals</h1></div>
     <App />
   </React.StrictMode>,
   document.getElementById("root")
