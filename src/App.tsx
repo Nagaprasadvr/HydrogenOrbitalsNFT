@@ -20,13 +20,14 @@ import {
 } from "@solana/wallet-adapter-react";
 import { WalletDialogProvider } from "@solana/wallet-adapter-material-ui";
 
-// import { createTheme } from "@material-ui/core";
+import { createTheme } from "@material-ui/core";
+import { ThemeProvider } from '@material-ui/core/styles';
 
-// const theme = createTheme({
-//   palette: {
-//     type: "light",
-//   },
-// });
+const theme = createTheme({
+  palette: {
+    type: "dark",
+  },
+});
 
 const getCandyMachineId = (): anchor.web3.PublicKey | undefined => {
   try {
@@ -70,6 +71,7 @@ const App = () => {
 
   return (
     <div>
+      <ThemeProvider theme={theme}>
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletDialogProvider>
@@ -89,6 +91,7 @@ const App = () => {
       <br></br>
       
       <img  style={{display:"flex",height:"100vh",width:"100vw",alignItems:"center",justifyContent:"center",alignContent:"center"}} src={hyd} alt="Hydrogen orbital"/>
+      </ThemeProvider>
       </div>
     
   );
