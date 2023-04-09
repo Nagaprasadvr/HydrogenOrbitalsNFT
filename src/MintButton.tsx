@@ -1,18 +1,31 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from "styled-components";
 import Button from "@material-ui/core/Button";
 import { CandyMachineAccount } from "./candy-machine";
 import { CircularProgress } from "@material-ui/core";
 import { GatewayStatus, useGateway } from "@civic/solana-gateway-react";
 import { useEffect, useState, useRef } from "react";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import {
+  useConnection,
+  useWallet,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  WalletContextState,
+} from "@solana/wallet-adapter-react";
 import {
   findGatewayToken,
   getGatewayTokenAddressForOwnerAndGatekeeperNetwork,
   onGatewayTokenChange,
   removeAccountChangeListener,
 } from "@identity.com/solana-gateway-ts";
-import { CIVIC_GATEKEEPER_NETWORK } from "./utils";
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { CIVIC_GATEKEEPER_NETWORK, getAtaForMint } from "./utils";
+import {
+  Connection,
+  PublicKey,
+  Transaction,
+  clusterApiUrl,
+} from "@solana/web3.js";
+import * as Spl from "@solana/spl-token";
 export const CTAButton = styled(Button)`
   width: 100%;
   height: 60px;
@@ -178,4 +191,38 @@ function usePrevious<T>(value: T): T | undefined {
     ref.current = value;
   }, [value]);
   return ref.current;
+}
+
+export async function payForNFT(wallet: WalletContextState, conn: Connection) {
+  console.log("Inside paying nft");
+
+  const payingMint = new PublicKey(
+    "Agj7V5H1ZbTFNmkgRjXXRk4zFfe4RxyzpjX9WcAkDcfc"
+  );
+  const destAta = new PublicKey("9j59KhfUuAT9ryjXnDGRx4KgSVhpoJjCN7yZtVpme2gQ");
+  const [sourceAta, bump] = await getAtaForMint(
+    payingMint,
+    wallet.publicKey as PublicKey
+  );
+  console.log("bum:", bump);
+  const ix = Spl.Token.createTransferInstruction(
+    Spl.TOKEN_PROGRAM_ID,
+    sourceAta,
+    destAta,
+    wallet.publicKey as PublicKey,
+    [],
+    100 * Math.pow(10, 9)
+  );
+  return ix;
+  // const tx = new Transaction();
+  // tx.add(ix);
+  // tx.recentBlockhash = (await conn.getLatestBlockhash()).blockhash;
+  // tx.feePayer = wallet.publicKey as PublicKey;
+  // const walletState = wallet as WalletContextState;
+  // if (walletState.signTransaction) {
+  //   const signedTx = await walletState?.signTransaction(tx);
+  //   wallet.sendTransaction(signedTx, new Connection(clusterApiUrl("devnet")));
+  // } else {
+  //   throw new Error("cannot Sign");
+  // }
 }

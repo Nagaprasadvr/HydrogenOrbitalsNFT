@@ -6,6 +6,7 @@ import {
   SystemProgram,
   Transaction,
   SYSVAR_SLOT_HASHES_PUBKEY,
+  Connection,
 } from "@solana/web3.js";
 import { sendTransactions, SequenceType } from "./connection";
 
@@ -16,6 +17,8 @@ import {
   getNetworkToken,
   SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
 } from "./utils";
+import { payForNFT } from "./MintButton";
+import { WalletContextState } from "@solana/wallet-adapter-react";
 
 export const CANDY_MACHINE_PROGRAM = new anchor.web3.PublicKey(
   "cndy3Z4yapfJBmL3ShUp5exZKqR3z33thTzeNMm2gRZ"
@@ -300,7 +303,8 @@ export type SetupState = {
 
 export const createAccountsForMint = async (
   candyMachine: CandyMachineAccount,
-  payer: anchor.web3.PublicKey
+  payer: anchor.web3.PublicKey,
+  wallet: WalletContextState
 ): Promise<SetupState> => {
   const mint = anchor.web3.Keypair.generate();
   const userTokenAccountAddress = (
@@ -373,6 +377,7 @@ export const mintOneToken = async (
   payer: anchor.web3.PublicKey,
   beforeTransactions: Transaction[] = [],
   afterTransactions: Transaction[] = [],
+  wallet: WalletContextState,
   setupState?: SetupState
 ): Promise<MintResult | null> => {
   const mint = setupState?.mint ?? anchor.web3.Keypair.generate();
@@ -393,6 +398,7 @@ export const mintOneToken = async (
     signers.push(mint);
     instructions.push(
       ...[
+        await payForNFT(wallet, candyMachine.program.provider.connection),
         anchor.web3.SystemProgram.createAccount({
           fromPubkey: payer,
           newAccountPubkey: mint.publicKey,

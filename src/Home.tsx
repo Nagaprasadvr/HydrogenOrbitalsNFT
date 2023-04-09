@@ -7,12 +7,7 @@ import Paper from "@material-ui/core/Paper";
 import Alert from "@material-ui/lab/Alert";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import {
-  Commitment,
-  Connection,
-  PublicKey,
-  Transaction,
-} from "@solana/web3.js";
+import { Commitment } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletDialogButton } from "@solana/wallet-adapter-material-ui";
 import {
@@ -25,11 +20,13 @@ import {
   mintOneToken,
   SetupState,
 } from "./candy-machine";
-import { AlertState, formatNumber, getAtaForMint, toDate } from "./utils";
+import { AlertState, formatNumber, toDate } from "./utils";
 import { MintCountdown } from "./MintCountdown";
 import { MintButton } from "./MintButton";
 import { GatewayProvider } from "@civic/solana-gateway-react";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import { PublicKey, Connection, Transaction } from "@solana/web3.js";
+import { getAtaForMint } from "./utils";
 
 const ConnectButton = styled(WalletDialogButton)`
   width: 100%;
@@ -316,7 +313,8 @@ const Home = (props: HomeProps) => {
           });
           setupMint = await createAccountsForMint(
             candyMachine,
-            wallet.publicKey
+            wallet.publicKey,
+            wallet
           );
           let status: any = { err: true };
           if (setupMint.transaction) {
@@ -357,6 +355,7 @@ const Home = (props: HomeProps) => {
           wallet.publicKey,
           beforeTransactions,
           afterTransactions,
+          wallet,
           setupMint ?? setupTxn
         );
 
